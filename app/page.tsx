@@ -992,7 +992,7 @@ function Footer() {
           }}
         >
           <p className="text-[10px] sm:text-xs text-[var(--steel)]">
-            © 2024 GEOKAD. Все права защищены.
+            © 2026 GEOKAD. Все права защищены.
           </p>
           <a href="#" className="text-[10px] sm:text-xs text-[var(--steel)] hover:text-[var(--white)] transition-colors">
             Политика конфиденциальности
