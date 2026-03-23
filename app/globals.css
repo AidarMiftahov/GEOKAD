@@ -1,0 +1,129 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  /* GEOKAD Brand Colors */
+  --white: #F4F6F5;
+  --ink: #262626;
+  --concrete: #E4EDEB;
+  --steel: #5E7270;
+  --accent: #367065;
+  --accent-dark: #265549;
+  --line: #C8D6D3;
+  
+  --background: #F4F6F5;
+  --foreground: #262626;
+  --card: #F4F6F5;
+  --card-foreground: #262626;
+  --popover: #F4F6F5;
+  --popover-foreground: #262626;
+  --primary: #367065;
+  --primary-foreground: #F4F6F5;
+  --secondary: #E4EDEB;
+  --secondary-foreground: #262626;
+  --muted: #E4EDEB;
+  --muted-foreground: #5E7270;
+  --accent-color: #367065;
+  --accent-foreground: #F4F6F5;
+  --destructive: #367065;
+  --destructive-foreground: #F4F6F5;
+  --border: #C8D6D3;
+  --input: #C8D6D3;
+  --ring: #367065;
+  --radius: 0;
+}
+
+@theme inline {
+  --font-display: 'Libre Baskerville', serif;
+  --font-body: 'IBM Plex Sans', sans-serif;
+  --font-sans: 'IBM Plex Sans', sans-serif;
+  --font-serif: 'Libre Baskerville', serif;
+  --font-mono: 'IBM Plex Mono', monospace;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent-color);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius-sm: 0;
+  --radius-md: 0;
+  --radius-lg: 0;
+  --radius-xl: 0;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Editorial Typography Classes */
+.label-caps {
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+/* Underline animation from left */
+.nav-link {
+  position: relative;
+}
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background-color: var(--ink);
+  transition: width 200ms ease;
+}
+.nav-link:hover::after {
+  width: 100%;
+}
+
+/* Service row hover */
+.service-row {
+  transition: transform 200ms ease;
+}
+.service-row:hover {
+  transform: translateX(4px);
+}
+
+/* Form input focus */
+.editorial-input {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--line);
+  border-radius: 0;
+  padding: 12px 0;
+  color: var(--white);
+  transition: border-color 150ms ease;
+}
+.editorial-input::placeholder {
+  color: var(--steel);
+}
+.editorial-input:focus {
+  outline: none;
+  border-bottom-color: var(--accent);
+}
