@@ -175,7 +175,6 @@ function Navigation() {
     return () => window.removeEventListener('resize', handleResize)
   }, [])
 
-  // Prevent body scroll when mobile menu is open
   useEffect(() => {
     if (mobileMenuOpen) {
       document.body.style.overflow = 'hidden'
@@ -268,7 +267,6 @@ function HeroSection() {
   const animatedNumber = useCounterAnimation(2400, counterStarted, 2000)
 
   useEffect(() => {
-    // Запускаем счётчик после того как CSS-анимация уже началась
     const timer = setTimeout(() => setCounterStarted(true), 400)
     return () => clearTimeout(timer)
   }, [])
@@ -282,18 +280,15 @@ function HeroSection() {
         aria-hidden="true"
       >
         <defs>
-          {/* Мелкая клетка */}
           <pattern id="smallGrid" width="40" height="40" patternUnits="userSpaceOnUse">
             <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#367065" strokeWidth="0.4"/>
           </pattern>
-          {/* Крупная клетка */}
           <pattern id="grid" width="200" height="200" patternUnits="userSpaceOnUse">
             <rect width="200" height="200" fill="url(#smallGrid)"/>
             <path d="M 200 0 L 0 0 0 200" fill="none" stroke="#367065" strokeWidth="0.8"/>
           </pattern>
         </defs>
         <rect width="100%" height="100%" fill="url(#grid)" opacity="0.18"/>
-        {/* Крестики на пересечениях крупной сетки */}
         {[200, 400, 600, 800, 1000, 1200].map(x =>
           [200, 400, 600, 800].map(y => (
             <g key={`${x}-${y}`}>
@@ -320,7 +315,7 @@ function HeroSection() {
         .hero-stats{ animation: heroFadeUp 0.7s ease 0.45s both; }
       `}</style>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex-1 flex flex-col justify-center">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex-1 flex flex-col justify-center relative z-10">
         <div className="flex flex-col lg:flex-row gap-8 sm:gap-10 lg:gap-8 xl:gap-12">
           {/* Left Column */}
           <div className="lg:w-[60%] xl:w-[58%]">
@@ -339,7 +334,6 @@ function HeroSection() {
 
           {/* Right Column - Counter */}
           <div className="hero-num lg:w-[40%] xl:w-[42%] flex flex-col justify-center items-start lg:items-end mt-4 lg:mt-0">
-            {/* Невидимый финальный текст резервирует место — число не сдвигает текст при росте */}
             <div className="relative">
               <div
                 className="font-display text-[64px] sm:text-[80px] md:text-[100px] lg:text-[120px] xl:text-[160px] text-[var(--concrete)] leading-none select-none tabular-nums invisible"
@@ -347,9 +341,7 @@ function HeroSection() {
               >
                 2&nbsp;400
               </div>
-              <div
-                className="font-display text-[64px] sm:text-[80px] md:text-[100px] lg:text-[120px] xl:text-[160px] text-[var(--concrete)] leading-none select-none tabular-nums absolute inset-0"
-              >
+              <div className="font-display text-[64px] sm:text-[80px] md:text-[100px] lg:text-[120px] xl:text-[160px] text-[var(--concrete)] leading-none select-none tabular-nums absolute inset-0">
                 {animatedNumber.toLocaleString('ru-RU')}
               </div>
             </div>
@@ -361,7 +353,7 @@ function HeroSection() {
       </div>
 
       {/* Bottom Stats Strip */}
-      <div className="hero-stats max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 sm:mt-12 lg:mt-16">
+      <div className="hero-stats max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 sm:mt-12 lg:mt-16 relative z-10">
         <div className="flex flex-col sm:flex-row sm:flex-wrap lg:flex-nowrap sm:items-center gap-3 sm:gap-x-4 sm:gap-y-2 lg:gap-0 text-[11px] sm:text-[12px] lg:text-[13px] tracking-[0.1em] uppercase font-light text-[var(--steel)]">
           <span>15 лет на рынке</span>
           <span className="hidden lg:inline mx-4 xl:mx-6 text-[var(--line)]">|</span>
@@ -442,7 +434,6 @@ function ServicesSection() {
       </div>
 
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 xl:pl-24">
-        {/* Mobile/Tablet Section Title */}
         <h2 
           className="xl:hidden font-display italic text-2xl sm:text-3xl text-[var(--white)] mb-8 sm:mb-12"
           style={{
@@ -663,8 +654,6 @@ function ProcessSection() {
         </AnimateOnScroll>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-10 lg:gap-6 xl:gap-8 relative">
-
-
           {steps.map((step, index) => (
             <div 
               key={index} 
@@ -707,6 +696,28 @@ function ContactSection() {
   })
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [isSubmitted, setIsSubmitted] = useState(false)
+  const [files, setFiles] = useState<File[]>([])
+  const [dragOver, setDragOver] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
+  const handleFiles = (incoming: FileList | null) => {
+    if (!incoming) return
+    const arr = Array.from(incoming)
+    setFiles(prev => {
+      const existing = prev.map(f => f.name)
+      const fresh = arr.filter(f => !existing.includes(f.name))
+      return [...prev, ...fresh]
+    })
+  }
+
+  const removeFile = (name: string) => {
+    setFiles(prev => prev.filter(f => f.name !== name))
+  }
+
+  const formatSize = (bytes: number) => {
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(0)} КБ`
+    return `${(bytes / (1024 * 1024)).toFixed(1)} МБ`
+  }
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -775,9 +786,7 @@ function ContactSection() {
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <p 
             className="font-display italic text-xl sm:text-2xl md:text-3xl text-[var(--white)]"
-            style={{
-              animation: 'fadeSlideUp 0.6s ease forwards',
-            }}
+            style={{ animation: 'fadeSlideUp 0.6s ease forwards' }}
           >
             Заявка принята. Свяжемся с вами в ближайшее время.
           </p>
@@ -890,6 +899,68 @@ function ContactSection() {
                   rows={3}
                   className="editorial-input w-full resize-none text-sm sm:text-base"
                 />
+              </div>
+
+              {/* File upload */}
+              <div>
+                <div
+                  className={`border border-dashed transition-colors duration-200 cursor-pointer ${
+                    dragOver
+                      ? 'border-[var(--accent)] bg-white/5'
+                      : 'border-[var(--steel)]/40 hover:border-[var(--accent)]/60'
+                  }`}
+                  onClick={() => fileInputRef.current?.click()}
+                  onDragOver={(e) => { e.preventDefault(); setDragOver(true) }}
+                  onDragLeave={() => setDragOver(false)}
+                  onDrop={(e) => { e.preventDefault(); setDragOver(false); handleFiles(e.dataTransfer.files) }}
+                >
+                  <div className="py-6 px-4 text-center">
+                    <svg className="mx-auto mb-2 opacity-40" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                      <polyline points="17 8 12 3 7 8"/>
+                      <line x1="12" y1="3" x2="12" y2="15"/>
+                    </svg>
+                    <p className="text-xs sm:text-sm text-[var(--steel)]">
+                      Перетащите файлы или <span className="text-[var(--accent)]">выберите</span>
+                    </p>
+                    <p className="text-[10px] text-[var(--steel)]/60 mt-1">
+                      PDF, JPG, PNG, DWG — до 20 МБ каждый
+                    </p>
+                  </div>
+                </div>
+
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  multiple
+                  accept=".pdf,.jpg,.jpeg,.png,.dwg,.doc,.docx"
+                  className="hidden"
+                  onChange={(e) => handleFiles(e.target.files)}
+                />
+
+                {files.length > 0 && (
+                  <ul className="mt-3 space-y-2">
+                    {files.map(file => (
+                      <li key={file.name} className="flex items-center justify-between gap-3 py-2 border-b border-white/10">
+                        <div className="flex items-center gap-2 min-w-0">
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="shrink-0 text-[var(--accent)]">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                            <polyline points="14 2 14 8 20 8"/>
+                          </svg>
+                          <span className="text-xs text-[var(--white)] truncate">{file.name}</span>
+                          <span className="text-[10px] text-[var(--steel)] shrink-0">{formatSize(file.size)}</span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => removeFile(file.name)}
+                          className="text-[var(--steel)] hover:text-[var(--white)] transition-colors shrink-0 text-lg leading-none"
+                        >
+                          ×
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </div>
 
               <button
